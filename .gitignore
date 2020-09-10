@@ -1,0 +1,8 @@
+/.env
+/.vscode
+/Leap.i.diff
+/Leap.py
+/LeapPython.so
+/__pycache__
+/libLeap.so
+/venv
