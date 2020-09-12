@@ -16,20 +16,24 @@ will be shown if they are in your device's touch.profile.
 
 This program specifies an icon, the file icon.png, in its App subclass.
 It also uses the particle.png file as the source for drawing the trails which
-are white on transparent. The file leaptracer.kv describes the application.
+are white on transparent. The file touchtracer.kv describes the application.
 
 The file android.txt is used to package the application for use with the
 Kivy Launcher Android application. For Android devices, you can
-copy/paste this directory into /sdcard/kivy/leaptracer on your Android device.
+copy/paste this directory into /sdcard/kivy/touchtracer on your Android device.
 
 '''
+__version__ = '1.0'
+
+import kivy
+kivy.require('1.0.6')
+
 from kivy.app import App
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.label import Label
 from kivy.graphics import Color, Rectangle, Point, GraphicException
 from random import random
 from math import sqrt
-from kivy.lang import Builder
 
 
 def calculate_points(x1, y1, x2, y2, steps=5):
@@ -48,7 +52,7 @@ def calculate_points(x1, y1, x2, y2, steps=5):
     return o
 
 
-class Leaptracer(FloatLayout):
+class Touchtracer(FloatLayout):
 
     def on_touch_down(self, touch):
         win = self.get_parent_window()
@@ -137,17 +141,16 @@ class Leaptracer(FloatLayout):
         label.size = label.texture_size[0] + 20, label.texture_size[1] + 20
 
 
-class LeaptracerApp(App):
-    title = 'Leaptracer'
+class TouchtracerApp(App):
+    title = 'Touchtracer'
     icon = 'icon.png'
 
     def build(self):
-        Builder.load_file("leaptracer.kv")
-        return Leaptracer()
+        return Touchtracer()
 
     def on_pause(self):
         return True
 
 
 if __name__ == '__main__':
-    LeaptracerApp().run()
+    TouchtracerApp().run()
