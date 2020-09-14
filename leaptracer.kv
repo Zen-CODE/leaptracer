@@ -10,6 +10,7 @@
             size: self.size
 
     BoxLayout:
+        # The Kivy logo and text
         padding: '10dp'
         spacing: '10dp'
         size_hint: 1, None
@@ -27,3 +28,25 @@
             text: 'Kivy %s - Leaptracer' % kivy.__version__
             valign: 'middle'
 
+    BoxLayout:
+        # The buttons and label
+        orientation: "vertical"
+        size_hint: 0.9, 0.9
+        pos_hint: {"x": 0.05, "y": 0.05}
+        BoxLayout:
+            orientation: "horizontal"
+            padding: '10dp'
+            spacing: '10dp'
+            Button:
+                id: btn1
+                text: "One"
+            Button:
+                id: btn2
+                text: "Two"
+            Button:
+                id: btn3
+                text: "Three"
+        Slider:
+            id: sld
+        Label:
+            text: "Slider = {0}. Buttons = {1}, {2}, {3}".format(sld.value, btn1.state, btn2.state, btn3.state)
