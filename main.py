@@ -30,6 +30,7 @@ from kivy.graphics import Color, Rectangle, Point, GraphicException
 from random import random
 from math import sqrt
 from kivy.lang import Builder
+from kivy.core.window import Window
 
 
 def calculate_points(x1, y1, x2, y2, steps=5):
@@ -49,6 +50,16 @@ def calculate_points(x1, y1, x2, y2, steps=5):
 
 
 class Leaptracer(FloatLayout):
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        Window.bind(on_motion=self.on_motion)
+
+    def on_motion(self, widget, etype, motionevent):
+        print(f"motionevent: {widget} - {etype} - {motionevent}")
+        # with self.canvas:
+        #     Color(1, 1, 1, mode='hsv')
+        #     Rectangle(pos=(motionevent.x - 2 , motionevent.y-2), size=(4, 4))
 
     def on_touch_down(self, touch):
         win = self.get_parent_window()
@@ -142,7 +153,7 @@ class LeaptracerApp(App):
     icon = 'icon.png'
 
     def build(self):
-        Builder.load_file("leaptracer.kv")
+        # Builder.load_file("leaptracer.kv")
         return Leaptracer()
 
     def on_pause(self):
