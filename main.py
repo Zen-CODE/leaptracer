@@ -101,7 +101,7 @@ class Leaptracer(FloatLayout):
         self.update_touch_label(ud['label'], touch)
         self.add_widget(ud['label'])
         touch.grab(self)
-        return True
+        return super().on_touch_down(touch)
 
     def on_touch_move(self, touch):
         if touch.grab_current is not self:
@@ -117,7 +117,7 @@ class Leaptracer(FloatLayout):
                 points = ud['lines'][index].points
                 oldx, oldy = points[-2], points[-1]
                 break
-            except:
+            except Exception:
                 index -= 1
 
         points = calculate_points(oldx, oldy, touch.x, touch.y)
@@ -149,6 +149,7 @@ class Leaptracer(FloatLayout):
         else:
             ud[t] += 1
         self.update_touch_label(ud['label'], touch)
+        return super().on_touch_move(touch)
 
     def on_touch_up(self, touch):
         if touch.grab_current is not self:
@@ -157,6 +158,7 @@ class Leaptracer(FloatLayout):
         ud = touch.ud
         self.canvas.remove_group(ud['group'])
         self.remove_widget(ud['label'])
+        return super().on_touch_up(touch)
 
     def update_touch_label(self, label, touch):
         label.text = 'ID: %s\nPos: (%d, %d)\nClass: %s' % (
