@@ -110,19 +110,24 @@ class LeapHandEventProvider(MotionEventProvider):
         touches = self.touches
         available_uid = []
         for hand in frame.hands:
-            is_touch = bool(hand.grab_strength < 0.75)
+            is_touch = bool(hand.grab_strength > 0.75)
             uid = hand.id
             available_uid.append(uid)
             position = hand.palm_position
             args = (position.x, position.y, position.z)
             if uid not in touches:
-                touch = LeapHandEvent(self.device, uid, args, True)
+                touch = LeapHandEvent(self.device, uid, args, is_touch)
                 events.append(('begin', touch))
                 touches[uid] = touch
             else:
                 touch = touches[uid]
-                touch.move(args)
-                events.append(('update', touch))
+                if touch.is_touch != is_touch:
+                    # Switched from a touch to non-touch event
+                    events.append(('end', touch))
+                    del touches[uid]
+                else:
+                    touch.move(args)
+                    events.append(('update', touch))
         for key in list(touches.keys())[:]:
             if key not in available_uid:
                 events.append(('end', touches[key]))
