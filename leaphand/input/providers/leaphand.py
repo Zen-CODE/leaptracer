@@ -10,9 +10,8 @@ LeapHand vs. LeapFinger Providers
 ---------------------------------
 
 The `LeapFinger` provider generates fine-grained input based on each of the
-fingers tracked by the LeapMotion. Whilst powerful, this provider does not
-generate any useful events as is, and requires the programmer to explicitley
-capture these events.
+fingers tracked by the LeapMotion. Whilst powerful, this provider requires the
+programmer to explicitley capture these events an interpret them.
 
 The `LeapHand` provider, however, simulates a more traditional pointing device
 in order to generate the traditional `on_touch_down`, `on_touch_move` and
@@ -22,10 +21,9 @@ screen and mouse input.
 LeapHand Mechanics
 ------------------
 
-In order to initiate the touch gesture, the :class:`LeapHand` uses the pinch
-gesture. A pinch initiates an `on_touch_down` event, and separating the
-fingers initiates the `on_touch_up`.
-
+In order to initiate the touch gesture, the :class:`LeapHand` uses the grab
+gesture. A grab initiates an `on_touch_down` event, and opening the hand
+initiates the `on_touch_up`.
 '''
 
 __all__ = ('LeapHandEventProvider', 'LeapHandEvent')
@@ -46,6 +44,10 @@ def normalize(value, a, b):
 
 
 class LeapHandEvent(MotionEvent):
+    def __init__(self, device, id, args, is_touch=False):
+        super().__init__(device, id, args)
+        self.is_touch = is_touch
+
 
     def depack(self, args):
         super(LeapHandEvent, self).depack(args)
@@ -57,7 +59,6 @@ class LeapHandEvent(MotionEvent):
         self.sy = normalize(y, 40, 460)
         self.sz = normalize(z, -350, 350)
         self.z = z
-        self.is_touch = True
 
 
 class LeapHandEventProvider(MotionEventProvider):
@@ -109,12 +110,13 @@ class LeapHandEventProvider(MotionEventProvider):
         touches = self.touches
         available_uid = []
         for hand in frame.hands:
+            is_touch = bool(hand.grab_strength < 0.75)
             uid = hand.id
             available_uid.append(uid)
             position = hand.palm_position
             args = (position.x, position.y, position.z)
             if uid not in touches:
-                touch = LeapHandEvent(self.device, uid, args)
+                touch = LeapHandEvent(self.device, uid, args, True)
                 events.append(('begin', touch))
                 touches[uid] = touch
             else:
