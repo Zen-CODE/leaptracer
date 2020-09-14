@@ -54,12 +54,25 @@ class Leaptracer(FloatLayout):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         Window.bind(on_motion=self.on_motion)
+        self._hand_position = None
+
+    @staticmethod
+    def get_pos(motion):
+        """ Return the position in screen co-ordinates."""
+        return motion.sx * Window.width, motion.sy * Window.height
 
     def on_motion(self, widget, etype, motionevent):
-        print(f"motionevent: {widget} - {etype} - {motionevent}")
-        # with self.canvas:
-        #     Color(1, 1, 1, mode='hsv')
-        #     Rectangle(pos=(motionevent.x - 2 , motionevent.y-2), size=(4, 4))
+        # print(f"motionevent: {widget} - {etype} - {motionevent}")
+        print(f"motionevent: {motionevent.x}, {motionevent.y}")
+        # if self._hand_position is None:
+        pos = self.get_pos(motionevent)
+        if self._hand_position is None:
+            with self.canvas:
+                Color(0.2, 1, 1, mode='hsv')
+                self._hand_position = Rectangle(
+                    pos=(pos[0]-2, pos[1]-2), size=(4, 4))
+        else:
+            self._hand_position.pos = (pos[0]-2, pos[1]-2)
 
     def on_touch_down(self, touch):
         win = self.get_parent_window()
