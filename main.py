@@ -26,10 +26,9 @@ copy/paste this directory into /sdcard/kivy/leaptracer on your Android device.
 from kivy.app import App
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.label import Label
-from kivy.graphics import Color, Rectangle, Point, GraphicException
+from kivy.graphics import Color, Rectangle, Point, GraphicException, Line
 from random import random
 from math import sqrt
-from kivy.lang import Builder
 from kivy.core.window import Window
 
 
@@ -54,25 +53,31 @@ class Leaptracer(FloatLayout):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         Window.bind(on_motion=self.on_motion)
-        self._hand_position = None
+        self._hand_lines = None
 
     @staticmethod
     def get_pos(motion):
-        """ Return the position in screen co-ordinates."""
+        """ Return the position in screen co-ordinates for the motion event."""
         return motion.sx * Window.width, motion.sy * Window.height
 
     def on_motion(self, widget, etype, motionevent):
-        # print(f"motionevent: {widget} - {etype} - {motionevent}")
-        print(f"motionevent: {motionevent.x}, {motionevent.y}")
-        # if self._hand_position is None:
+        cross_width = 6.0
         pos = self.get_pos(motionevent)
-        if self._hand_position is None:
+        if self._hand_lines is None:
             with self.canvas:
                 Color(0.2, 1, 1, mode='hsv')
-                self._hand_position = Rectangle(
-                    pos=(pos[0]-2, pos[1]-2), size=(4, 4))
+                self._hand_lines = [
+                    Line(points=[pos[0] - cross_width, pos[1],
+                                 pos[0] + cross_width, pos[1]]),
+                    Line(points=[pos[0], pos[1] - cross_width,
+                                 pos[0], pos[1] + cross_width])]
         else:
-            self._hand_position.pos = (pos[0]-2, pos[1]-2)
+            self._hand_lines[0].points = [
+                pos[0] - cross_width, pos[1],
+                pos[0] + cross_width, pos[1]]
+            self._hand_lines[1].points = [
+                pos[0], pos[1] - cross_width,
+                pos[0], pos[1] + cross_width]
 
     def on_touch_down(self, touch):
         win = self.get_parent_window()
