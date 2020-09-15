@@ -84,20 +84,16 @@ class Leaptracer(FloatLayout):
 
     def on_touch_down(self, touch):
         if self.draw_motion:
-            win = self.get_parent_window()
             ud = touch.ud
             ud['group'] = g = str(touch.uid)
             pointsize = 5
-            if 'pressure' in touch.profile:
-                ud['pressure'] = touch.pressure
-                pointsize = (touch.pressure * 100000) ** 2
             ud['color'] = random()
 
             with self.canvas:
                 Color(ud['color'], 1, 1, mode='hsv', group=g)
                 ud['lines'] = [
-                    Rectangle(pos=(touch.x, 0), size=(1, win.height), group=g),
-                    Rectangle(pos=(0, touch.y), size=(win.width, 1), group=g),
+                    Rectangle(pos=(touch.x, 0), size=(1, self.height), group=g),
+                    Rectangle(pos=(0, touch.y), size=(self.width, 1), group=g),
                     Point(points=(touch.x, touch.y), source='particle.png',
                           pointsize=pointsize, group=g)]
 
