@@ -66,24 +66,21 @@ class Leaptracer(FloatLayout):
         """ Return the position in screen co-ordinates for the motion event."""
         return motion.sx * Window.width, motion.sy * Window.height
 
-    def on_motion(self, widget, etype, motionevent):
-        cross_width = 6.0
-        pos = self.get_pos(motionevent)
+    def draw_crosshair(self, pos, cross_width):
+        """ Draw the crosshairs indicating the hands current positions."""
         if self._hand_lines is None:
             with self.canvas:
                 Color(0.2, 1, 1, mode='hsv')
-                self._hand_lines = [
-                    Line(points=[pos[0] - cross_width, pos[1],
-                                 pos[0] + cross_width, pos[1]]),
-                    Line(points=[pos[0], pos[1] - cross_width,
-                                 pos[0], pos[1] + cross_width])]
-        else:
-            self._hand_lines[0].points = [
-                pos[0] - cross_width, pos[1],
-                pos[0] + cross_width, pos[1]]
-            self._hand_lines[1].points = [
-                pos[0], pos[1] - cross_width,
-                pos[0], pos[1] + cross_width]
+                self._hand_lines = [Line(), Line()]
+        self._hand_lines[0].points = [
+            pos[0] - cross_width, pos[1], pos[0] + cross_width, pos[1]]
+        self._hand_lines[1].points = [
+            pos[0], pos[1] - cross_width, pos[0], pos[1] + cross_width]
+
+    def on_motion(self, widget, etype, motionevent):
+        """Draw the crosshairs at the position of the hands."""
+        cross_width = 6.0
+        self.draw_crosshair(self.get_pos(motionevent), cross_width)
 
     def on_touch_down(self, touch):
         if self.draw_motion:
