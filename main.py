@@ -30,7 +30,6 @@ from kivy.graphics import Color, Rectangle, Point, GraphicException, Line
 from random import random
 from math import sqrt
 from kivy.core.window import Window
-from time import time
 from kivy.properties import BooleanProperty
 
 
@@ -103,7 +102,7 @@ class Leaptracer(FloatLayout):
                     Rectangle(pos=(touch.x, 0), size=(1, win.height), group=g),
                     Rectangle(pos=(0, touch.y), size=(win.width, 1), group=g),
                     Point(points=(touch.x, touch.y), source='particle.png',
-                        pointsize=pointsize, group=g)]
+                          pointsize=pointsize, group=g)]
 
             ud['label'] = Label(size_hint=(None, None))
             self.update_touch_label(ud['label'], touch)
@@ -128,18 +127,6 @@ class Leaptracer(FloatLayout):
                     index -= 1
 
             points = calculate_points(oldx, oldy, touch.x, touch.y)
-
-            # if pressure changed create a new point instruction
-            if 'pressure' in ud:
-                if not .95 < (touch.pressure / ud['pressure']) < 1.05:
-                    g = ud['group']
-                    pointsize = (touch.pressure * 100000) ** 2
-                    with self.canvas:
-                        Color(ud['color'], 1, 1, mode='hsv', group=g)
-                        ud['lines'].append(
-                            Point(points=(), source='particle.png',
-                                pointsize=pointsize, group=g))
-
             if points:
                 try:
                     lp = ud['lines'][-1].add_point
@@ -149,11 +136,6 @@ class Leaptracer(FloatLayout):
                     pass
 
             ud['label'].pos = touch.pos
-            t = int(time())
-            if t not in ud:
-                ud[t] = 1
-            else:
-                ud[t] += 1
             self.update_touch_label(ud['label'], touch)
         return super().on_touch_move(touch)
 
