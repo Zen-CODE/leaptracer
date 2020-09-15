@@ -63,8 +63,6 @@ class LeapHandEvent(MotionEvent):
 
 class LeapHandEventProvider(MotionEventProvider):
 
-    __handlers__ = {}
-
     def start(self):
         # Don't import at the start, or the error will be displayed
         # for users who don't have Leap
