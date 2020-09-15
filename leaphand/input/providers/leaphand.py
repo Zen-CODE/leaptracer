@@ -88,7 +88,6 @@ class LeapHandEventProvider(MotionEventProvider):
             def on_exit(self, controller):
                 pass
 
-        self.uid = 0
         self.touches = {}
         self.listener = LeapMotionListener()
         self.controller = Leap.Controller(self.listener)
