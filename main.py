@@ -31,6 +31,7 @@ from random import random
 from math import sqrt
 from kivy.core.window import Window
 from kivy.properties import BooleanProperty
+from leaphandapp import LeapHandApp
 
 
 def calculate_points(x1, y1, x2, y2, steps=5):
@@ -55,32 +56,6 @@ class Leaptracer(FloatLayout):
     file.
     """
     draw_motion = BooleanProperty(True)
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        Window.bind(on_motion=self.on_motion)
-        self._hand_lines = None
-
-    @staticmethod
-    def get_pos(motion):
-        """ Return the position in screen co-ordinates for the motion event."""
-        return motion.sx * Window.width, motion.sy * Window.height
-
-    def draw_crosshair(self, pos, cross_width):
-        """ Draw the crosshairs indicating the hands current positions."""
-        if self._hand_lines is None:
-            with self.canvas:
-                Color(0.2, 1, 1, mode='hsv')
-                self._hand_lines = [Line(), Line()]
-        self._hand_lines[0].points = [
-            pos[0] - cross_width, pos[1], pos[0] + cross_width, pos[1]]
-        self._hand_lines[1].points = [
-            pos[0], pos[1] - cross_width, pos[0], pos[1] + cross_width]
-
-    def on_motion(self, widget, etype, motionevent):
-        """Draw the crosshairs at the position of the hands."""
-        cross_width = 6.0
-        self.draw_crosshair(self.get_pos(motionevent), cross_width)
 
     def on_touch_down(self, touch):
         if self.draw_motion:
@@ -148,12 +123,12 @@ class Leaptracer(FloatLayout):
         label.size = label.texture_size[0] + 20, label.texture_size[1] + 20
 
 
-class LeaptracerApp(App):
+class LeaptracerApp(LeapHandApp, App):
     title = 'Leaptracer'
     icon = 'icon.png'
 
     def build(self):
-        return Leaptracer()
+        return Leaptracer(draw_motion=True)
 
     def on_pause(self):
         return True

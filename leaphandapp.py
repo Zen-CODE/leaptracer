@@ -39,6 +39,19 @@ class LeapHandApp:
     """
     Mixin class for rendering a pre-touch crosshair graphic for positioning of
     the hand when using the LeapHand input provider.
+
+    Usage
+    =====
+
+    When declaring your Kivy app, add this mixing as the superclas of your
+    main application object. e.g.::
+
+        from kivy.app import App
+
+
+        class LeaptracerApp(LeapHandApp, App):
+            ...
+
     """
     leaphand_overlay = None
 
