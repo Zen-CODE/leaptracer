@@ -4,6 +4,25 @@ graphics for positioning of the hand for the LeapHand input provider.
 """
 from kivy.core.window import Window
 from kivy.graphics import Color, Line
+from kivy.lang import Builder
+from kivy.factory import Factory
+from textwrap import dedent
+
+
+Builder.load_string(dedent("""
+<LeapHandCrosshair@Widget>:
+    cross_color: [0.2, 1, 1, 1]
+    size: 12.0, 12.0
+    pos_hint: {}
+    size_hint: [None, None]
+    canvas:
+        Color:
+            rgba: self.cross_color
+        Line:
+            points: self.x, self.y + 0.5 * self.height, self.right, self.y + 0.5 * self.height  # noqa: E501
+        Line:
+            points: self.x + 0.5 * self.width, self.y, self.x + 0.5 * self.width, self.top
+"""))
 
 
 class LeapHandOverlay:
@@ -13,26 +32,37 @@ class LeapHandOverlay:
     """
     def __init__(self, root):
         Window.bind(on_motion=self.on_motion)
-        with root.canvas:
-            Color(0.2, 1, 1, mode='hsv')
-            self._hand_lines = [Line(), Line()]
+        self._crosshairs = {}
+        self.root = root
+
+    def _get_crosshair(self, hand, is_touch):
+        """Return the LeapHandCrossHair widget for displaying the position."""
+        widget = self._crosshairs.get(hand)
+        if widget is None:
+            widget = Factory.LeapHandCrosshair()
+            self._crosshairs[hand] = widget
+            self.root.add_widget(widget)
+        widget.cross_color = [0.2, 1, 0, 1] if is_touch else \
+            [0.5, 0.5, 0.5, 0.75]
+        return widget
 
     @staticmethod
     def get_pos(motion):
         """ Return the position in screen co-ordinates for the motion event."""
         return motion.sx * Window.width, motion.sy * Window.height
 
-    def draw_crosshair(self, pos, cross_width):
+    def place_crosshair(self, pos, hand, is_touch):
         """ Draw the crosshairs indicating the hands current positions."""
-        self._hand_lines[0].points = [
-            pos[0] - cross_width, pos[1], pos[0] + cross_width, pos[1]]
-        self._hand_lines[1].points = [
-            pos[0], pos[1] - cross_width, pos[0], pos[1] + cross_width]
+        widget = self._get_crosshair(hand, is_touch)
+        widget.pos = pos[0] - 0.5 * widget.width, \
+            pos[1] - 0.5 * widget.height
 
     def on_motion(self, widget, etype, motionevent):
         """Draw the crosshairs at the position of the hands."""
-        cross_width = 6.0
-        self.draw_crosshair(self.get_pos(motionevent), cross_width)
+        self.place_crosshair(
+            self.get_pos(motionevent),
+            motionevent.hand,
+            motionevent.is_touch)
 
 
 class LeapHandApp:

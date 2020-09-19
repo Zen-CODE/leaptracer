@@ -39,14 +39,15 @@ _LEAP_QUEUE = deque()
 Leap = InteractionBox = None
 
 
-def normalize(value, a, b):
-    return (value - a) / float(b - a)
+def normalize(value, start, scale):
+    return (value - start) / float(scale - start)
 
 
 class LeapHandEvent(MotionEvent):
-    def __init__(self, device, id, args, is_touch=False):
+    def __init__(self, device, id, args, is_touch, is_right):
         super().__init__(device, id, args)
         self.is_touch = is_touch
+        self.hand = "right" if is_right else "left"
 
 
     def depack(self, args):
@@ -55,7 +56,7 @@ class LeapHandEvent(MotionEvent):
             return
         self.profile = ('pos', 'pos3d', )
         x, y, z = args
-        self.sx = normalize(x, -150, 150)
+        self.sx = normalize(x, -100, 150)
         self.sy = normalize(y, 80, 400)
         self.sz = normalize(z, -350, 350)
         self.z = z
@@ -113,7 +114,8 @@ class LeapHandEventProvider(MotionEventProvider):
             position = hand.palm_position
             args = (position.x, position.y, position.z)
             if uid not in touches:
-                touch = LeapHandEvent(self.device, uid, args, is_touch)
+                touch = LeapHandEvent(
+                    self.device, uid, args, is_touch, hand.is_right)
                 events.append(('begin', touch))
                 touches[uid] = touch
             else:
