@@ -56,7 +56,7 @@ class LeapHandEvent(MotionEvent):
         self.profile = ('pos', 'pos3d', )
         x, y, z = args
         self.sx = normalize(x, -150, 150)
-        self.sy = normalize(y, 40, 460)
+        self.sy = normalize(y, 80, 400)
         self.sz = normalize(z, -350, 350)
         self.z = z
 
