@@ -59,10 +59,11 @@ class LeapHandOverlay:
 
     def on_motion(self, widget, etype, motionevent):
         """Draw the crosshairs at the position of the hands."""
-        self.place_crosshair(
-            self.get_pos(motionevent),
-            motionevent.hand,
-            motionevent.is_touch)
+        if hasattr(motionevent, "hand"):
+            self.place_crosshair(
+                self.get_pos(motionevent),
+                motionevent.hand,
+                motionevent.is_touch)
 
 
 class LeapHandApp:
