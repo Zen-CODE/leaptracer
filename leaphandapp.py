@@ -19,8 +19,10 @@ Builder.load_string(dedent("""
         Color:
             rgba: self.cross_color
         Line:
+            width: 2
             points: self.x, self.y + 0.5 * self.height, self.right, self.y + 0.5 * self.height  # noqa: E501
         Line:
+            width: 2
             points: self.x + 0.5 * self.width, self.y, self.x + 0.5 * self.width, self.top
 """))
 
