@@ -56,7 +56,7 @@ class LeapHandEvent(MotionEvent):
         self.z = z  # Ranges from 0 (directly above) to about 300
         norm = normalize(z, 0, 300)
         norm = 0 if norm <= 0 else min(norm, 1)
-        self.pressure = 1 - norm
+        self.pressure = 1 - norm n # Invert, so pressure closer to screen
         print(f"pressure = {self.pressure}")
 
 
