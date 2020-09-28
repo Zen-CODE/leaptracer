@@ -62,6 +62,9 @@ class Leaptracer(FloatLayout):
             ud = touch.ud
             ud['group'] = g = str(touch.uid)
             pointsize = 5
+            if 'pressure' in touch.profile:
+                ud['pressure'] = touch.pressure
+                pointsize = (touch.pressure * 100000) ** 2
             ud['color'] = random()
 
             with self.canvas:
@@ -93,6 +96,18 @@ class Leaptracer(FloatLayout):
                     break
                 except Exception:
                     index -= 1
+
+
+            # if pressure changed create a new point instruction
+            if 'pressure' in ud:
+                if not .95 < (touch.pressure / ud['pressure']) < 1.05:
+                    g = ud['group']
+                    pointsize = (touch.pressure * 100000) ** 2
+                    with self.canvas:
+                        Color(ud['color'], 1, 1, mode='hsv', group=g)
+                        ud['lines'].append(
+                            Point(points=(), source='particle.png',
+                                pointsize=pointsize, group=g))
 
             points = calculate_points(oldx, oldy, touch.x, touch.y)
             if points:
