@@ -107,7 +107,7 @@ class Leaptracer(FloatLayout):
                         Color(ud['color'], 1, 1, mode='hsv', group=g)
                         ud['lines'].append(
                             Point(points=(), source='particle.png',
-                                pointsize=pointsize, group=g))
+                                  pointsize=pointsize, group=g))
 
             points = calculate_points(oldx, oldy, touch.x, touch.y)
             if points:

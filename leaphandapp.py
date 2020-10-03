@@ -7,6 +7,8 @@ from kivy.graphics import Color, Line
 from kivy.lang import Builder
 from kivy.factory import Factory
 from textwrap import dedent
+from time import time
+from kivy.clock import Clock
 
 
 Builder.load_string(dedent("""
@@ -15,6 +17,7 @@ Builder.load_string(dedent("""
     size: 12.0, 12.0
     pos_hint: {}
     size_hint: [None, None]
+    last_update: 0
     canvas:
         Color:
             rgba: self.cross_color
@@ -36,6 +39,15 @@ class LeapHandOverlay:
         Window.bind(on_motion=self.on_motion)
         self._crosshairs = {}
         self.root = root
+        Clock.schedule_interval(self._clean_up, 2)
+
+    def _clean_up(self, dt):
+        """ Remove any of the crosshairs if they are not currently active."""
+        ch = self._crosshairs.copy()
+        for key, cross in ch.items():
+            if time() - cross.last_update > 2:
+                cross.parent.remove_widget(cross)
+                self._crosshairs.pop(key)
 
     def _get_crosshair(self, hand, is_touch):
         """Return the LeapHandCrossHair widget for displaying the position."""
@@ -56,6 +68,7 @@ class LeapHandOverlay:
     def place_crosshair(self, pos, hand, is_touch):
         """ Draw the crosshairs indicating the hands current positions."""
         widget = self._get_crosshair(hand, is_touch)
+        widget.last_update = time()
         widget.pos = pos[0] - 0.5 * widget.width, \
             pos[1] - 0.5 * widget.height
 
