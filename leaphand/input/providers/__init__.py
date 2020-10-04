@@ -3,6 +3,45 @@
 Providers
 =========
 
+The list of available input **providerid**\s is as follows:
+
++-----------------------------------+------------+
+| Provider                          | providerid |
++===================================+============+
+| Android Joystick                  | android    |
++-----------------------------------+------------+
+| HID Input (linux)                 | hidinput   |
++-----------------------------------+------------+
+| Linux Multitouch (using libmtdev) | mtdev      |
++-----------------------------------+------------+
+| MacOS Touch Device                | mactouch   |
++-----------------------------------+------------+
+| Mouse                             | mouse      |
++-----------------------------------+------------+
+| TUIO                              | tuio       |
++-----------------------------------+------------+
+| LeapMotion (10 fingers)           | leapfinger |
++-----------------------------------+------------+
+| LeapMotion (2 hands)              | leaphand   |
++-----------------------------------+------------+
+| Wacom (linux)                     | linuxwacom |
++-----------------------------------+------------+
+| Windows Touch                     | wm_touch   |
++-----------------------------------+------------+
+| Windows Pen                       | wm_pen     |
++-----------------------------------+------------+
+
+In order to activate an input provider, you need to add it to the **input**
+section of the configuration. For example::
+
+    [input]
+    acert230h = mtdev,/dev/input/event2
+
+Please see the :mod:`kivy.config` **input** section for more detail on how to
+use these **providerid**\s.
+
+For specific details on the input providers, please see the module specific
+documentation below.
 '''
 
 import os
@@ -62,7 +101,7 @@ if (platform == 'android' and not USE_SDL2) or 'KIVY_DOC' in os.environ:
         Logger.exception(err)
 
 try:
-    # import kivy.input.providers.leapfinger  # NOQA
+    import kivy.input.providers.leapfinger  # NOQA
     import kivy.input.providers.leaphand  # NOQA
 except:
     err = 'Input: LeapFinger/LeapHand is not available on your system'
