@@ -16,6 +16,18 @@ In order to initiate the touch gesture, the `LeapHand` uses the grab
 gesture. A grab initiates :meth:`~kivy.core.window.WindowBase.on_touch_down`,
 :meth:`~kivy.core.window.WindowBase.on_touch_move` and
 :meth:`~kivy.core.window.WindowBase.on_touch_up` events.
+
+The axes of the input are used as follow:
+    x - derived from the leap x co-ordinate (left/right)
+    y - derived from the leap y co-ordinate (up/down)
+    z - dervied from the inverse of the leap z co-ordinate
+
+.. note::
+
+    The z co-ordinate is used to set the "pressure" parameter of the touch
+    event where moving your hand closer to the monitor results in greater
+    pressure. The pressure is set as a normalized value between 0 and 1.
+
 '''
 
 __all__ = ('LeapHandEventProvider', 'LeapHandEvent')
@@ -56,8 +68,7 @@ class LeapHandEvent(MotionEvent):
         self.z = z  # Ranges from 0 (directly above) to about 300
         norm = normalize(z, 0, 300)
         norm = 0 if norm <= 0 else min(norm, 1)
-        self.pressure = 1 - norm # Invert, so pressure closer to screen
-        # print(f"pressure = {self.pressure}")
+        self.pressure = 1 - norm  # Invert, so pressure closer to screen
 
 
 class LeapHandEventProvider(MotionEventProvider):
